@@ -169,8 +169,8 @@ export default function App() {
       }}
     >
       <header style={{ marginBottom: 24 }}>
-        <h1 style={{ marginBottom: 4 }}>🗓️ 팀플 시간 조율</h1>
-        <p style={{ color: "#6b7280", margin: 0 }}>
+        <h1 style={{ margin: "0 0 10px", lineHeight: 1.3 }}>🗓️ 공강 메이트 찾기</h1>
+        <p style={{ color: "#6b7280", margin: 0, lineHeight: 1.6 }}>
           팀원 모두가 가능한 시간을 한눈에. 방을 만들고 ID를 공유한 뒤, 각자 가능한 시간을 체크하세요.
         </p>
       </header>
@@ -373,7 +373,7 @@ const cardStyle = {
   boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
 };
 
-const h2Style = { fontSize: 18, marginTop: 0, marginBottom: 14 };
+const h2Style = { fontSize: 18, marginTop: 0, marginBottom: 14, color: "#111827" };
 
 const inputStyle = {
   flex: 1,
