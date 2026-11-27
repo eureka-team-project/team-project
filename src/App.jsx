@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 
 const API_BASE = "https://n64kgto9e6.execute-api.ap-southeast-2.amazonaws.com";
 const DAYS = ["월", "화", "수", "목", "금"];
@@ -22,11 +22,11 @@ function hourLabel(startMin) {
 
 // 겹침 인원수에 따른 배경색 (히트맵)
 function heatColor(count, max) {
-  if (count <= 0) return "#fffafc";
+  if (count <= 0) return "#f8fafc";
   const ratio = max > 0 ? count / max : 0;
-  // 연한 핑크 -> 진한 핑크
-  const light = 95 - Math.round(ratio * 35); // 95% -> 60%
-  return `hsl(340, 100%, ${light}%)`;
+  // 연한 인디고 -> 진한 인디고
+  const light = 94 - Math.round(ratio * 44); // 94% -> 50%
+  return `hsl(239, 68%, ${light}%)`;
 }
 
 export default function App() {
@@ -70,7 +70,7 @@ export default function App() {
       const id = data.roomId || data.id || "";
       setRoomId(id);
       setRoomTitle(data.roomName || data.name || roomName.trim());
-      setStatus(id ? `방 생성 완료! 이 방 ID를 팀원에게 공유하세요 → ${id}` : "방이 생성되었어요.");
+      setStatus(id ? `방을 만들었어요. 이 방 ID를 팀원에게 공유하세요: ${id}` : "방이 생성되었어요.");
       if (id) await loadRoom(id);
     } catch {
       setStatus("방 생성 중 오류가 났어요.");
@@ -163,42 +163,41 @@ export default function App() {
       style={{
         maxWidth: 860,
         margin: "0 auto",
-        padding: "40px 20px",
-        fontFamily: "'Gaegu', 'Jua', system-ui, sans-serif",
-        fontSize: 16,
-        color: "#5b5266",
-        background: "#fff7f0",
+        padding: "48px 20px",
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        fontSize: 15,
+        color: "#334155",
+        background: "#f1f5f9",
         minHeight: "100vh",
       }}
     >
-      <header style={{ marginBottom: 28, textAlign: "center" }}>
+      <header style={{ marginBottom: 32 }}>
         <h1
           style={{
-            margin: "0 0 12px",
-            lineHeight: 1.3,
-            fontFamily: "'Jua', system-ui, sans-serif",
-            fontSize: 38,
-            color: "#ff8fab",
-            textShadow: "2px 2px 0 #fff0f5",
+            margin: "0 0 8px",
+            lineHeight: 1.25,
+            fontSize: 30,
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+            color: "#0f172a",
           }}
         >
-          � 공강 메이트 찾기
+          공강 메이트 찾기
         </h1>
-        <p style={{ color: "#9a8fa6", margin: 0, lineHeight: 1.7, fontSize: 17 }}>
-          친구 모두가 가능한 시간을 한눈에! 방을 만들고 ID를 공유한 뒤, 각자 가능한 시간을 콕콕 체크해요 🧸
+        <p style={{ color: "#64748b", margin: 0, lineHeight: 1.6, fontSize: 15 }}>
+          모두가 가능한 시간을 한눈에. 방을 만들고 ID를 공유한 뒤, 각자 가능한 시간을 체크하세요.
         </p>
       </header>
 
       {status && (
         <p
           style={{
-            background: "#fff0f5",
-            color: "#ff6f91",
-            padding: "14px 18px",
-            borderRadius: 20,
-            border: "2px dashed #ffc2d4",
-            textAlign: "center",
-            fontSize: 16,
+            background: "#eef2ff",
+            color: "#4338ca",
+            padding: "12px 16px",
+            borderRadius: 8,
+            border: "1px solid #c7d2fe",
+            fontSize: 14,
           }}
         >
           {status}
@@ -206,7 +205,7 @@ export default function App() {
       )}
 
       <section style={cardStyle}>
-        <h2 style={h2Style}>🏠 1. 방 만들기 / 불러오기</h2>
+        <h2 style={h2Style}>1. 방 만들기 / 불러오기</h2>
         <form onSubmit={createRoom} style={{ display: "flex", gap: 8, marginBottom: 10 }}>
           <input
             placeholder="방 이름 (예: OO조 회의)"
@@ -231,7 +230,7 @@ export default function App() {
           <p style={{ marginTop: 10 }}>
             현재 방: <strong>{roomTitle}</strong>{" "}
             {roomId && (
-              <span style={{ color: "#9a8fa6" }}>
+              <span style={{ color: "#64748b" }}>
                 (ID: <code>{roomId}</code>)
               </span>
             )}
@@ -240,7 +239,7 @@ export default function App() {
       </section>
 
       <section style={cardStyle}>
-        <h2 style={h2Style}>✏️ 2. 내 가능 시간 선택</h2>
+        <h2 style={h2Style}>2. 내 가능 시간 선택</h2>
         <form onSubmit={saveSchedule}>
           <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
             <input
@@ -256,8 +255,8 @@ export default function App() {
               내 시간표 저장 ({selected.length}칸)
             </button>
           </div>
-          <p style={{ fontSize: 15, color: "#9a8fa6", marginTop: 0 }}>
-            칸을 콕 눌러 가능한 시간을 골라요. 다시 누르면 취소돼요 🐾
+          <p style={{ fontSize: 15, color: "#64748b", marginTop: 0 }}>
+            칸을 클릭해 가능한 시간을 선택하세요. 다시 클릭하면 해제됩니다.
           </p>
           <ScheduleTable
             mode="select"
@@ -268,10 +267,10 @@ export default function App() {
       </section>
 
       <section style={cardStyle}>
-        <h2 style={h2Style}>🎀 3. 전체 가능 시간 (겹침 현황)</h2>
+        <h2 style={h2Style}>3. 전체 가능 시간 (겹침 현황)</h2>
         {maxCount <= 0 ? (
-          <p style={{ color: "#9a8fa6" }}>
-            아직 저장된 시간표가 없어요. 방을 만들거나 불러온 뒤 시간표를 저장해보세요 🐣
+          <p style={{ color: "#64748b" }}>
+            아직 저장된 시간표가 없어요. 방을 만들거나 불러온 뒤 시간표를 저장해보세요.
           </p>
         ) : (
           <>
@@ -283,15 +282,15 @@ export default function App() {
                 <li
                   key={key}
                   style={{
-                    padding: "12px 16px",
-                    marginBottom: 8,
-                    background: "#f3f0ff",
-                    borderRadius: 18,
-                    fontSize: 16,
+                    padding: "10px 14px",
+                    marginBottom: 6,
+                    background: "#eef2ff",
+                    borderRadius: 8,
+                    fontSize: 14,
                   }}
                 >
-                  <strong style={{ color: "#9d7bea" }}>⭐ {key}</strong>
-                  <span style={{ color: "#9a8fa6" }}>
+                  <strong style={{ color: "#4338ca" }}>{key}</strong>
+                  <span style={{ color: "#64748b" }}>
                     {" "}— {members.length ? members.join(", ") : "참여자 정보 없음"}
                   </span>
                 </li>
@@ -309,8 +308,8 @@ export default function App() {
                   <strong>{hovered}</strong> 가능: {hoveredMembers.join(", ")}
                 </span>
               ) : (
-                <span style={{ color: "#c4b7cc" }}>
-                  칸에 마우스를 올리면 가능한 사람이 표시돼요 🐱
+                <span style={{ color: "#94a3b8" }}>
+                  칸에 마우스를 올리면 가능한 사람이 표시됩니다.
                 </span>
               )}
             </div>
@@ -336,7 +335,7 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
         <tbody>
           {SLOTS.map((startMin) => (
             <tr key={startMin}>
-              <td style={{ ...tdStyle, fontWeight: 700, whiteSpace: "nowrap", background: "#fff0f5", color: "#ff8fab" }}>
+              <td style={{ ...tdStyle, fontWeight: 600, whiteSpace: "nowrap", background: "#f8fafc", color: "#475569" }}>
                 {hourLabel(startMin)}
               </td>
               {DAYS.map((day) => {
@@ -351,13 +350,13 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
                         ...tdStyle,
                         cursor: "pointer",
                         textAlign: "center",
-                        background: active ? "#ff8fab" : "#fffafc",
-                        color: active ? "#fff" : "#d9c7d2",
+                        background: active ? "#4f46e5" : "#f8fafc",
+                        color: active ? "#fff" : "#cbd5e1",
                         fontWeight: active ? 700 : 400,
                         userSelect: "none",
                       }}
                     >
-                      {active ? "💖" : ""}
+                      {active ? "가능" : ""}
                     </td>
                   );
                 }
@@ -371,7 +370,7 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
                       ...tdStyle,
                       textAlign: "center",
                       background: heatColor(count, maxCount),
-                      color: count > maxCount / 2 ? "#fff" : "#9a8fa6",
+                      color: count > maxCount / 2 ? "#fff" : "#64748b",
                       fontWeight: count > 0 ? 700 : 400,
                       cursor: count > 0 ? "pointer" : "default",
                     }}
@@ -389,72 +388,71 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
 }
 
 const cardStyle = {
-  border: "2px solid #ffe3ec",
-  borderRadius: 28,
+  border: "1px solid #e2e8f0",
+  borderRadius: 12,
   padding: 24,
-  marginBottom: 24,
+  marginBottom: 20,
   background: "#ffffff",
-  boxShadow: "0 8px 24px rgba(255, 143, 171, 0.14)",
+  boxShadow: "0 1px 3px rgba(15, 23, 42, 0.04)",
 };
 
 const h2Style = {
-  fontSize: 22,
+  fontSize: 17,
   marginTop: 0,
   marginBottom: 16,
-  color: "#ff6f91",
-  fontFamily: "'Jua', system-ui, sans-serif",
+  fontWeight: 600,
+  letterSpacing: "-0.01em",
+  color: "#0f172a",
 };
 
 const inputStyle = {
   flex: 1,
-  padding: "12px 16px",
-  border: "2px solid #ffe3ec",
-  borderRadius: 999,
-  fontSize: 16,
+  padding: "10px 14px",
+  border: "1px solid #cbd5e1",
+  borderRadius: 8,
+  fontSize: 15,
   fontFamily: "inherit",
-  color: "#5b5266",
-  background: "#fffafc",
+  color: "#334155",
+  background: "#fff",
   boxSizing: "border-box",
   outline: "none",
 };
 
 const primaryBtn = {
-  padding: "12px 24px",
-  background: "#ff8fab",
+  padding: "10px 20px",
+  background: "#4f46e5",
   color: "#fff",
   border: "none",
-  borderRadius: 999,
+  borderRadius: 8,
   cursor: "pointer",
-  fontSize: 16,
-  fontWeight: 700,
-  fontFamily: "'Jua', system-ui, sans-serif",
-  boxShadow: "0 4px 12px rgba(255, 143, 171, 0.35)",
+  fontSize: 15,
+  fontWeight: 600,
+  fontFamily: "inherit",
 };
 
 const secondaryBtn = {
-  padding: "12px 20px",
-  background: "#fff0f5",
-  color: "#ff8fab",
-  border: "2px solid #ffd4e1",
-  borderRadius: 999,
+  padding: "10px 18px",
+  background: "#fff",
+  color: "#475569",
+  border: "1px solid #cbd5e1",
+  borderRadius: 8,
   cursor: "pointer",
   fontSize: 15,
-  fontWeight: 700,
+  fontWeight: 500,
   fontFamily: "inherit",
 };
 
 const thStyle = {
-  border: "2px solid #fff0f5",
+  border: "1px solid #e2e8f0",
   padding: 10,
-  background: "#fff0f5",
-  color: "#ff6f91",
-  fontSize: 15,
-  fontFamily: "'Jua', system-ui, sans-serif",
+  background: "#f8fafc",
+  color: "#475569",
+  fontSize: 14,
+  fontWeight: 600,
 };
 
 const tdStyle = {
-  border: "2px solid #fff5f8",
+  border: "1px solid #e2e8f0",
   padding: "8px 6px",
-  fontSize: 14,
-  borderRadius: 10,
+  fontSize: 13,
 };
