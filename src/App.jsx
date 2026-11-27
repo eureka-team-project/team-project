@@ -22,11 +22,11 @@ function hourLabel(startMin) {
 
 // 겹침 인원수에 따른 배경색 (히트맵)
 function heatColor(count, max) {
-  if (count <= 0) return "#f8fafc";
+  if (count <= 0) return "#fff8f4";
   const ratio = max > 0 ? count / max : 0;
-  // 연한 인디고 -> 진한 인디고
-  const light = 94 - Math.round(ratio * 44); // 94% -> 50%
-  return `hsl(239, 68%, ${light}%)`;
+  // 연한 코랄 -> 진한 코랄레드
+  const light = 94 - Math.round(ratio * 40); // 94% -> 54%
+  return `hsl(8, 85%, ${light}%)`;
 }
 
 export default function App() {
@@ -164,27 +164,37 @@ export default function App() {
         maxWidth: 860,
         margin: "0 auto",
         padding: "48px 20px",
-        fontFamily: "'Quicksand', system-ui, -apple-system, sans-serif",
+        fontFamily: "'Baloo 2', system-ui, -apple-system, sans-serif",
         fontSize: 15,
-        color: "#334155",
-        background: "linear-gradient(180deg, #f5f3fc 0%, #eef0fb 100%)",
+        color: "#5c4a44",
+        background: "linear-gradient(180deg, #fff6f0 0%, #ffece6 100%)",
         minHeight: "100vh",
       }}
     >
-      <header style={{ marginBottom: 32 }}>
+      <header
+        style={{
+          marginBottom: 28,
+          padding: "30px 28px",
+          borderRadius: 24,
+          background:
+            "linear-gradient(135deg, #ffe4d6 0%, #ffd0cc 55%, #ffc2c2 100%)",
+          border: "1px solid #ffd3c4",
+          boxShadow: "0 10px 28px rgba(244, 114, 94, 0.18)",
+          textAlign: "center",
+        }}
+      >
         <h1
           style={{
             margin: "0 0 8px",
-            lineHeight: 1.25,
-            fontSize: 32,
+            lineHeight: 1.2,
+            fontSize: 34,
             fontWeight: 700,
-            letterSpacing: "0.01em",
-            color: "#4338ca",
+            color: "#d6453b",
           }}
         >
           공강 메이트 찾기
         </h1>
-        <p style={{ color: "#64748b", margin: 0, lineHeight: 1.6, fontSize: 15 }}>
+        <p style={{ color: "#b2685c", margin: 0, lineHeight: 1.6, fontSize: 15 }}>
           모두가 가능한 시간을 한눈에. 방을 만들고 ID를 공유한 뒤, 각자 가능한 시간을 체크하세요.
         </p>
       </header>
@@ -192,11 +202,11 @@ export default function App() {
       {status && (
         <p
           style={{
-            background: "#eef2ff",
-            color: "#4338ca",
+            background: "#fff0ea",
+            color: "#d6453b",
             padding: "12px 16px",
             borderRadius: 8,
-            border: "1px solid #c7d2fe",
+            border: "1px solid #ffcbbd",
             fontSize: 14,
           }}
         >
@@ -230,7 +240,7 @@ export default function App() {
           <p style={{ marginTop: 10 }}>
             현재 방: <strong>{roomTitle}</strong>{" "}
             {roomId && (
-              <span style={{ color: "#64748b" }}>
+              <span style={{ color: "#9c7b70" }}>
                 (ID: <code>{roomId}</code>)
               </span>
             )}
@@ -255,7 +265,7 @@ export default function App() {
               내 시간표 저장 ({selected.length}칸)
             </button>
           </div>
-          <p style={{ fontSize: 15, color: "#64748b", marginTop: 0 }}>
+          <p style={{ fontSize: 15, color: "#9c7b70", marginTop: 0 }}>
             칸을 클릭해 가능한 시간을 선택하세요. 다시 클릭하면 해제됩니다.
           </p>
           <ScheduleTable
@@ -269,7 +279,7 @@ export default function App() {
       <section style={cardStyle}>
         <h2 style={h2Style}>3. 전체 가능 시간 (겹침 현황)</h2>
         {maxCount <= 0 ? (
-          <p style={{ color: "#64748b" }}>
+          <p style={{ color: "#9c7b70" }}>
             아직 저장된 시간표가 없어요. 방을 만들거나 불러온 뒤 시간표를 저장해보세요.
           </p>
         ) : (
@@ -284,13 +294,13 @@ export default function App() {
                   style={{
                     padding: "10px 14px",
                     marginBottom: 6,
-                    background: "#eef2ff",
+                    background: "#fff0ea",
                     borderRadius: 8,
                     fontSize: 14,
                   }}
                 >
-                  <strong style={{ color: "#4338ca" }}>{key}</strong>
-                  <span style={{ color: "#64748b" }}>
+                  <strong style={{ color: "#d6453b" }}>{key}</strong>
+                  <span style={{ color: "#9c7b70" }}>
                     {" "}— {members.length ? members.join(", ") : "참여자 정보 없음"}
                   </span>
                 </li>
@@ -308,7 +318,7 @@ export default function App() {
                   <strong>{hovered}</strong> 가능: {hoveredMembers.join(", ")}
                 </span>
               ) : (
-                <span style={{ color: "#94a3b8" }}>
+                <span style={{ color: "#c0a79c" }}>
                   칸에 마우스를 올리면 가능한 사람이 표시됩니다.
                 </span>
               )}
@@ -335,7 +345,7 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
         <tbody>
           {SLOTS.map((startMin) => (
             <tr key={startMin}>
-              <td style={{ ...tdStyle, fontWeight: 600, whiteSpace: "nowrap", background: "#f8fafc", color: "#475569" }}>
+              <td style={{ ...tdStyle, fontWeight: 600, whiteSpace: "nowrap", background: "#fff8f4", color: "#8a6a5f" }}>
                 {hourLabel(startMin)}
               </td>
               {DAYS.map((day) => {
@@ -350,8 +360,8 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
                         ...tdStyle,
                         cursor: "pointer",
                         textAlign: "center",
-                        background: active ? "#4f46e5" : "#f8fafc",
-                        color: active ? "#fff" : "#cbd5e1",
+                        background: active ? "#e5533d" : "#fff8f4",
+                        color: active ? "#fff" : "#e8c5b8",
                         fontWeight: active ? 700 : 400,
                         userSelect: "none",
                       }}
@@ -370,7 +380,7 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
                       ...tdStyle,
                       textAlign: "center",
                       background: heatColor(count, maxCount),
-                      color: count > maxCount / 2 ? "#fff" : "#64748b",
+                      color: count > maxCount / 2 ? "#fff" : "#9c7b70",
                       fontWeight: count > 0 ? 700 : 400,
                       cursor: count > 0 ? "pointer" : "default",
                     }}
@@ -388,31 +398,30 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
 }
 
 const cardStyle = {
-  border: "1px solid #e2e8f0",
-  borderRadius: 12,
+  border: "1px solid #f3ddd2",
+  borderRadius: 18,
   padding: 24,
   marginBottom: 20,
   background: "#ffffff",
-  boxShadow: "0 1px 3px rgba(15, 23, 42, 0.04)",
+  boxShadow: "0 6px 20px rgba(229, 83, 61, 0.1)",
 };
 
 const h2Style = {
-  fontSize: 17,
+  fontSize: 18,
   marginTop: 0,
   marginBottom: 16,
-  fontWeight: 600,
-  letterSpacing: "-0.01em",
-  color: "#0f172a",
+  fontWeight: 700,
+  color: "#d6453b",
 };
 
 const inputStyle = {
   flex: 1,
   padding: "10px 14px",
-  border: "1px solid #cbd5e1",
+  border: "1px solid #e8c5b8",
   borderRadius: 8,
   fontSize: 15,
   fontFamily: "inherit",
-  color: "#334155",
+  color: "#5c4a44",
   background: "#fff",
   boxSizing: "border-box",
   outline: "none",
@@ -420,7 +429,7 @@ const inputStyle = {
 
 const primaryBtn = {
   padding: "10px 20px",
-  background: "#4f46e5",
+  background: "#e5533d",
   color: "#fff",
   border: "none",
   borderRadius: 8,
@@ -433,8 +442,8 @@ const primaryBtn = {
 const secondaryBtn = {
   padding: "10px 18px",
   background: "#fff",
-  color: "#475569",
-  border: "1px solid #cbd5e1",
+  color: "#8a6a5f",
+  border: "1px solid #e8c5b8",
   borderRadius: 8,
   cursor: "pointer",
   fontSize: 15,
@@ -443,16 +452,16 @@ const secondaryBtn = {
 };
 
 const thStyle = {
-  border: "1px solid #e2e8f0",
+  border: "1px solid #f0d9cf",
   padding: 10,
-  background: "#f8fafc",
-  color: "#475569",
+  background: "#fff8f4",
+  color: "#8a6a5f",
   fontSize: 14,
   fontWeight: 600,
 };
 
 const tdStyle = {
-  border: "1px solid #e2e8f0",
+  border: "1px solid #f0d9cf",
   padding: "8px 6px",
   fontSize: 13,
 };
