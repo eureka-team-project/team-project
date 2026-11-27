@@ -44,12 +44,12 @@ export default function App() {
     return counts.length ? Math.max(...counts) : 0;
   }, [summary]);
 
-  // 가장 많이 겹치는 시간대 (최소 1명 이상)
+  // 가장 많이 겹치는 시간대 (최소 1명 이상). 각 항목에 참여자 이름도 함께 담는다.
   const bestSlots = useMemo(() => {
     if (maxCount <= 0) return [];
     return Object.entries(summary)
       .filter(([, v]) => (v?.count ?? 0) === maxCount)
-      .map(([key]) => key);
+      .map(([key, v]) => ({ key, members: v?.members ?? [] }));
   }, [summary, maxCount]);
 
   async function createRoom(e) {
@@ -62,7 +62,11 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: roomName.trim() }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setStatus(data.message || "방 생성에 실패했어요. 잠시 후 다시 시도해주세요.");
+        return;
+      }
       const id = data.roomId || data.id || "";
       setRoomId(id);
       setRoomTitle(data.roomName || data.name || roomName.trim());
@@ -74,17 +78,33 @@ export default function App() {
   }
 
   async function loadRoom(targetId = roomId) {
-    if (!String(targetId).trim()) return;
+    const id = String(targetId).trim();
+    if (!id) return;
     setStatus("방 정보 불러오는 중...");
     try {
-      const res = await fetch(`${API_BASE}/rooms/${encodeURIComponent(targetId.trim())}`);
-      const data = await res.json();
-      setRoomId(targetId.trim());
-      setRoomTitle(data.roomName || data.name || targetId.trim());
+      const res = await fetch(`${API_BASE}/rooms/${encodeURIComponent(id)}`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setStatus(
+          res.status === 404
+            ? "그런 방 ID를 찾을 수 없어요. ID를 다시 확인해주세요."
+            : data.message || "방 정보를 불러오지 못했어요."
+        );
+        return;
+      }
+      setRoomId(id);
+      setRoomTitle(data.roomName || data.name || id);
       setSummary(data.summary && typeof data.summary === "object" ? data.summary : {});
+
+      // 이미 저장해 둔 내 시간표가 있으면 선택 상태로 복원 (다른 브라우저에서도 동일하게 보이도록)
+      const me = nickname.trim();
+      if (me && data.schedules && Array.isArray(data.schedules[me])) {
+        setSelected(data.schedules[me]);
+      }
+
       setStatus("불러오기 완료!");
     } catch {
-      setStatus("방 정보를 불러오지 못했어요.");
+      setStatus("방 정보를 불러오지 못했어요. 네트워크 상태를 확인해주세요.");
     }
   }
 
@@ -105,6 +125,10 @@ export default function App() {
       setStatus("방 ID와 닉네임을 입력해주세요.");
       return;
     }
+    if (selected.length === 0) {
+      setStatus("가능한 시간을 한 칸 이상 선택한 뒤 저장해주세요.");
+      return;
+    }
     setStatus("시간표 저장 중...");
     try {
       const res = await fetch(
@@ -115,15 +139,19 @@ export default function App() {
           body: JSON.stringify({ nickname: nickname.trim(), slots: selected }),
         }
       );
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setStatus(data.message || "시간표 저장에 실패했어요. 잠시 후 다시 시도해주세요.");
+        return;
+      }
       if (data.summary && typeof data.summary === "object") {
         setSummary(data.summary);
       } else {
         await loadRoom(roomId.trim());
       }
-      setStatus("시간표 저장 완료!");
+      setStatus(`${nickname.trim()}님의 시간표(${selected.length}칸)를 저장했어요!`);
     } catch {
-      setStatus("시간표 저장 중 오류가 났어요.");
+      setStatus("시간표 저장 중 오류가 났어요. 네트워크 상태를 확인해주세요.");
     }
   }
 
@@ -224,13 +252,27 @@ export default function App() {
         ) : (
           <>
             <p style={{ marginTop: 0 }}>
-              가장 많이 겹치는 시간(<strong>{maxCount}명</strong>):{" "}
-              {bestSlots.length ? (
-                <strong style={{ color: "#1d4ed8" }}>{bestSlots.join(", ")}</strong>
-              ) : (
-                "-"
-              )}
+              가장 많이 겹치는 시간 — <strong>{maxCount}명</strong>이 가능해요:
             </p>
+            <ul style={{ margin: "0 0 14px", paddingLeft: 0, listStyle: "none" }}>
+              {bestSlots.map(({ key, members }) => (
+                <li
+                  key={key}
+                  style={{
+                    padding: "8px 12px",
+                    marginBottom: 6,
+                    background: "#eff6ff",
+                    borderRadius: 8,
+                    fontSize: 14,
+                  }}
+                >
+                  <strong style={{ color: "#1d4ed8" }}>{key}</strong>
+                  <span style={{ color: "#6b7280" }}>
+                    {" "}— {members.length ? members.join(", ") : "참여자 정보 없음"}
+                  </span>
+                </li>
+              ))}
+            </ul>
             <ScheduleTable
               mode="summary"
               summary={summary}
