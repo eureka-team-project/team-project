@@ -3,19 +3,21 @@ import { useMemo, useState } from "react";
 const API_BASE = "https://n64kgto9e6.execute-api.ap-southeast-2.amazonaws.com";
 const DAYS = ["월", "화", "수", "목", "금"];
 
-// 09:00 ~ 22:00, 1시간 단위 (13칸)
-const HOURS = Array.from({ length: 13 }, (_, i) => 9 + i); // 9..21 (각 칸의 시작 시각)
+// 09:00 ~ 21:00, 30분 단위 (24칸). 각 값은 칸 시작 시각의 "0시 기준 분".
+const SLOTS = Array.from({ length: 24 }, (_, i) => 9 * 60 + i * 30); // 540..1230
 
-function slotKey(day, hour) {
-  const start = String(hour).padStart(2, "0");
-  const end = String(hour + 1).padStart(2, "0");
-  return `${day} ${start}:00-${end}:00`;
+function formatTime(min) {
+  const h = String(Math.floor(min / 60)).padStart(2, "0");
+  const m = String(min % 60).padStart(2, "0");
+  return `${h}:${m}`;
 }
 
-function hourLabel(hour) {
-  const start = String(hour).padStart(2, "0");
-  const end = String(hour + 1).padStart(2, "0");
-  return `${start}:00-${end}:00`;
+function slotKey(day, startMin) {
+  return `${day} ${formatTime(startMin)}-${formatTime(startMin + 30)}`;
+}
+
+function hourLabel(startMin) {
+  return `${formatTime(startMin)}-${formatTime(startMin + 30)}`;
 }
 
 // 겹침 인원수에 따른 배경색 (히트맵)
@@ -86,8 +88,8 @@ export default function App() {
     }
   }
 
-  function toggleSlot(day, hour) {
-    const key = slotKey(day, hour);
+  function toggleSlot(day, startMin) {
+    const key = slotKey(day, startMin);
     setSelected((prev) =>
       prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
     );
@@ -266,19 +268,19 @@ function ScheduleTable({ mode, selected = [], onToggle, summary = {}, maxCount =
           </tr>
         </thead>
         <tbody>
-          {HOURS.map((hour) => (
-            <tr key={hour}>
+          {SLOTS.map((startMin) => (
+            <tr key={startMin}>
               <td style={{ ...tdStyle, fontWeight: 600, whiteSpace: "nowrap", background: "#f9fafb" }}>
-                {hourLabel(hour)}
+                {hourLabel(startMin)}
               </td>
               {DAYS.map((day) => {
-                const key = slotKey(day, hour);
+                const key = slotKey(day, startMin);
                 if (mode === "select") {
                   const active = selected.includes(key);
                   return (
                     <td
                       key={key}
-                      onClick={() => onToggle(day, hour)}
+                      onClick={() => onToggle(day, startMin)}
                       style={{
                         ...tdStyle,
                         cursor: "pointer",
