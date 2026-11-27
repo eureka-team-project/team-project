@@ -164,10 +164,10 @@ export default function App() {
         maxWidth: 860,
         margin: "0 auto",
         padding: "48px 20px",
-        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        fontFamily: "'Quicksand', system-ui, -apple-system, sans-serif",
         fontSize: 15,
         color: "#334155",
-        background: "#f1f5f9",
+        background: "linear-gradient(180deg, #f5f3fc 0%, #eef0fb 100%)",
         minHeight: "100vh",
       }}
     >
@@ -176,10 +176,10 @@ export default function App() {
           style={{
             margin: "0 0 8px",
             lineHeight: 1.25,
-            fontSize: 30,
+            fontSize: 32,
             fontWeight: 700,
-            letterSpacing: "-0.02em",
-            color: "#0f172a",
+            letterSpacing: "0.01em",
+            color: "#4338ca",
           }}
         >
           공강 메이트 찾기
